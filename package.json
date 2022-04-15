@@ -8,7 +8,9 @@
     "src/lite.js",
     "src/full.js",
     "dist/geocanvas.min.js",
-    "dist/geocanvas.lite.min.js"
+    "dist/geocanvas.min.js.map",
+    "dist/geocanvas.lite.min.js",
+    "dist/geocanvas.lite.min.js.map"
   ],
   "scripts": {
     "build": "npm run build:default && npm run build:lite",
