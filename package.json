@@ -1,0 +1,47 @@
+{
+  "name": "geocanvas",
+  "version": "0.0.0",
+  "description": "Functions for Working with GeoSpatial Canvas Elements",
+  "main": "./src/full.js",
+  "files": [
+    "src/core.js",
+    "src/lite.js",
+    "src/full.js",
+    "dist/geocanvas.min.js",
+    "dist/geocanvas.lite.min.js"
+  ],
+  "scripts": {
+    "build": "npm run build:default && npm run build:lite",
+    "build:default": "WEBPACK_OUTPUT_FILENAME=geocanvas.min.js webpack --entry ./src/full.js",
+    "build:lite": "WEBPACK_OUTPUT_FILENAME=geocanvas.lite.min.js webpack --entry ./src/lite.js",
+    "format": "npx prettier --arrow-parens=avoid --print-width=120 --trailing-comma=none --write ./src",
+    "setup": "cd data && ./setup.sh",
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DanielJDufour/geocanvas.git"
+  },
+  "keywords": [
+    "canvas",
+    "clip",
+    "imagedata",
+    "mask"
+  ],
+  "author": "Daniel J. Dufour",
+  "license": "CC0-1.0",
+  "bugs": {
+    "url": "https://github.com/DanielJDufour/geocanvas/issues"
+  },
+  "homepage": "https://github.com/DanielJDufour/geocanvas#readme",
+  "devDependencies": {
+    "flug": "^2.2.0",
+    "webpack": "^5.72.0",
+    "webpack-cli": "^4.9.2"
+  },
+  "dependencies": {
+    "geomask": "^0.2.0",
+    "to-canvas": "^0.1.0",
+    "xdim": "^1.5.2"
+  }
+}

@@ -109,3 +109,5 @@ pnpm-lock.yaml
 *bak*
 .pnpm-store/
 .dvm
+data/*.tif*
+.DS_Store

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<hmtl style="background: chartreuse">
+  <head>
+    <script src="https://unpkg.com/flug"></script>
+    <script src="./dist/geocanvas.min.js"></script>
+    <style>
+      canvas {
+        border: 5px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas></canvas>
+    <script>
+      const canvas = document.querySelector("canvas");
+      const context = canvas.getContext('2d');
+      const img = new Image();
+      img.src = './data/gadas-export.png';
+      img.onload = async function() {
+        canvas.height = img.height;
+        canvas.width = img.width;
+        context.drawImage(img, 0, 0);
+
+        // clip the image
+        const geojson = await fetch("./data/sri-lanka.geojson").then(response => response.json());
+        
+        const start = performance.now();
+        geocanvas.maskCanvas({
+          canvas,
+          canvas_srs: 3857,
+          canvas_bbox: [7698736.857788673, 163239.83797837645, 10066450.245949661, 1325082.6679127468],
+          debug: true,
+          mask: geojson,
+          mask_srs: 4326
+        });
+        const end = performance.now();
+        const duration = end - start;
+        console.log(`masking took ${duration.toFixed()} milliseconds`);
+      };
+    </script>
+  </body>
+</hmtl>

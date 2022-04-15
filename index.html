@@ -1,0 +1,109 @@
+<html>
+  <head>
+    <script src="https://unpkg.com/dropzone-complete"></script>
+    <script src="https://unpkg.com/read-pixels"></script>
+    <script src="https://unpkg.com/to-canvas"></script>
+    <script src="https://unpkg.com/geotiff@2.0.3/dist-browser/geotiff.js"></script>
+    <script src="https://unpkg.com/reproject-geojson"></script>
+    <script src="./dist/geocanvas.min.js"></script>
+    <script>window.state = {};</script>
+    <style>
+      #canvas-wrapper canvas {
+        height: 400px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>GeoCanvas Demo</h1>
+    
+    <h2>Upload a GeoTIFF</h2>
+    <input id="raster" name="raster" type="file">
+    <div id="canvas-wrapper">
+      <canvas style="background: lightgray; max-height: 400px"></canvas>
+    </div>
+    <script>
+      document.getElementById("raster").addEventListener('input', async function(event) {
+        state.raster = {};
+        const file = event.target.files[0];
+        const fname = file.name.toLowerCase();
+        if (fname.endsWith("tif") || fname.endsWith("tiff")) {
+          const tif = await GeoTIFF.fromBlob(file);
+          console.log({tif});
+          const im = await tif.getImage();
+          console.log({im});
+          state.raster.data = await im.readRGB({ enableAlpha: true, interleave: true });
+          state.raster.height = await im.getHeight();
+          state.raster.width = await im.getWidth();
+          state.raster.bbox = await im.getBoundingBox();
+
+          const [resolutionX, resolutionY] = im.getResolution();
+          state.raster.pixel_width = Math.abs(resolutionX);
+          state.raster.pixel_height = Math.abs(resolutionY);
+
+          const geokeys = im.getGeoKeys();
+          state.raster.crs = geokeys.ProjectedCSTypeGeoKey || geokeys.GeographicTypeGeoKey;
+
+          if (state.raster.crs === 32767) {
+            alert('Your raster has a CRS of 32767, meaning an unknown projection.  This demo only works with known projections');
+          }
+
+          document.getElementById("raster-bbox").value = state.raster.bbox.toString();
+        }
+        state.raster.canvas = await toCanvas(state.raster.data);
+        const wrapper = document.getElementById("canvas-wrapper");
+        wrapper.innerHTML = "";
+        wrapper.appendChild(state.raster.canvas);
+      });
+    </script>
+    <br/>
+    <br/>
+
+    <h2>Raster Bounding Box</h2>
+    <input id="raster-bbox" name="raster-bbox" type="text" placeholder="xmin,ymin,xmax,ymax" style="width: 400px;" >
+
+    <br/>
+    <br/>
+
+    <h2>GeoJSON Mask</h2>
+    <dropzone-complete id="vector" height=400 width="100%"></dropzone-complete>
+    <script>
+      document.getElementById("vector").addEventListener("change", async function (event) {
+        if (event.detail && event.detail.file) {
+          state.vector = JSON.parse(await event.detail.file.text());
+        }
+      });
+    </script>
+    <br/>
+    <br/>
+    <button id="go" style="cursor: pointer; font-size: 24px; padding: 15px 30px;">Execute</button>
+    <script>
+      document.getElementById("go").addEventListener("click", async evt => {
+        console.log("clicked");
+
+        const geometry = reprojectGeoJSON(state.vector, { to: state.raster.crs });
+
+        const [xmin, ymin, xmax, ymax] = state.raster.bbox;
+
+        // get canvas
+        const canvas = document.querySelector("#canvas-wrapper canvas");
+        
+        const start = performance.now();
+        geocanvas.maskCanvas({
+          canvas,
+          canvas_bbox: state.raster.bbox,
+          canvas_srs: state.raster.crs,
+          mask: geometry,
+          masks_srs: 4326
+        });
+        const end = performance.now();
+        const duration = end - start;
+        console.log(`masking took ${duration.toFixed()} milliseconds`);        
+      });
+    </script>
+
+    <hr>
+
+    <h2>Result</h2>
+    <div id="result"></div>
+  </body>
+</html>
