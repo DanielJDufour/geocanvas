@@ -21,17 +21,17 @@ maskCanvas({
   // bounding box of the canvas
   // as [xmin, ymin, xmax, ymax]
   // or [west, south, east, north]
-  canvas_bbox: [],
+  canvas_bbox: [7698736.857788673, 163239.83797837645, 10066450.245949661, 1325082.6679127468],
 
   // required
   // spatial reference system of the canvas image
   canvas_srs: 3857,
 
   // optional 
-  canvas_pixel_height: 
+  canvas_pixel_height: 2445.98490512499,
 
   // optional
-  canvas_pixel_width: 
+  canvas_pixel_width: 2445.98490512499,
 
   // required
   // a GeoJSON Feature, FeatureCollection, Polygon, or MultiPolygon
