@@ -18,7 +18,7 @@
     "build:lite": "WEBPACK_OUTPUT_FILENAME=geocanvas.lite.min.js webpack --entry ./src/lite.js",
     "format": "npx prettier --arrow-parens=avoid --print-width=120 --trailing-comma=none --write ./src",
     "setup": "cd data && ./setup.sh",
-    "test": "node test.js"
+    "test": "echo 'no test.js yet'"
   },
   "repository": {
     "type": "git",
