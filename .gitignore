@@ -107,3 +107,5 @@ dist
 pnpm-lock.yaml
 *old*
 *bak*
+.pnpm-store/
+.dvm
