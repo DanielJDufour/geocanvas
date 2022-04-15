@@ -1,6 +1,6 @@
 {
   "name": "geocanvas",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Functions for Working with GeoSpatial Canvas Elements",
   "main": "./src/full.js",
   "files": [
