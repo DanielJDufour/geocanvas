@@ -22,13 +22,11 @@ function maskImageData({
     raster_width: data_width,
     raster_srs: data_srs,
     mask,
-    mask_srs
-    // reproject
+    mask_srs,
+    reproject
   });
-  if (debug) console.log("[geocanvas] segments by row are:", rows);
-  // we don't use forEach because that skips empty rows
-  for (let r = 0; r < rows.length; r++) {
-    const ranges = rows[r];
+
+  rows.forEach((ranges, r) => {
     if (ranges) {
       const row_offset = r * 4 * data_width;
       ranges.forEach(([start, end]) => {
@@ -37,7 +35,7 @@ function maskImageData({
         }
       });
     }
-  }
+  });
 }
 
 function maskCanvas({

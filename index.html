@@ -6,7 +6,11 @@
     <script src="https://unpkg.com/geotiff@2.0.3/dist-browser/geotiff.js"></script>
     <script src="https://unpkg.com/reproject-geojson"></script>
     <script src="./dist/geocanvas.min.js"></script>
-    <script>window.state = {};</script>
+    <script>
+      window.state = {
+        strategy: "outside"
+      };
+    </script>
     <style>
       #canvas-wrapper canvas {
         height: 400px;
@@ -43,11 +47,8 @@
           const geokeys = im.getGeoKeys();
           state.raster.crs = geokeys.ProjectedCSTypeGeoKey || geokeys.GeographicTypeGeoKey;
 
-          if (state.raster.crs === 32767) {
-            alert('Your raster has a CRS of 32767, meaning an unknown projection.  This demo only works with known projections');
-          }
-
           document.getElementById("raster-bbox").value = state.raster.bbox.toString();
+          document.getElementById("raster-crs").value = state.raster.crs.toString();
         }
         state.raster.canvas = await toCanvas(state.raster.data);
         const wrapper = document.getElementById("canvas-wrapper");
@@ -64,6 +65,17 @@
     <br/>
     <br/>
 
+    <h2>Raster Bounding Box</h2>
+    <input id="raster-crs" name="raster-crs" type="text" placeholder="EPSG:4326" style="width: 400px;" >
+    <script>
+      document.getElementById("raster-crs").addEventListener("change", function (event) {
+        state.raster.crs = event.target.value;
+      });
+    </script>
+
+    <br/>
+    <br/>
+
     <h2>GeoJSON Mask</h2>
     <dropzone-complete id="vector" height=400 width="100%"></dropzone-complete>
     <script>
@@ -73,14 +85,37 @@
         }
       });
     </script>
+
     <br/>
     <br/>
+
+    <h2>Masking Strategy</h2>
+    <select id="strategy">
+      <option value="inside">inside</option>
+      <option value="outside" selected="selected">outside</option>
+    </select>
+    <script>
+      document.getElementById("strategy").addEventListener("change", function (event) {
+        state.strategy = event.target.value;
+      });
+    </script>
+
+    <br/>
+    <br/>
+
+    <hr />
+
+    <br/>
+    <br/>
+
     <button id="go" style="cursor: pointer; font-size: 24px; padding: 15px 30px;">Execute</button>
     <script>
       document.getElementById("go").addEventListener("click", async evt => {
         console.log("clicked");
 
-        const geometry = reprojectGeoJSON(state.vector, { to: state.raster.crs });
+        if (state.raster.crs === 32767) {
+            alert('Your raster has a CRS of 32767, meaning an unknown projection.  This demo only works with known projections');
+        }
 
         const [xmin, ymin, xmax, ymax] = state.raster.bbox;
 
@@ -88,22 +123,21 @@
         const canvas = document.querySelector("#canvas-wrapper canvas");
         
         const start = performance.now();
-        geocanvas.maskCanvas({
+
+        const data = {
           canvas,
           canvas_bbox: state.raster.bbox,
           canvas_srs: state.raster.crs,
-          mask: geometry,
-          masks_srs: 4326
-        });
+          mask: state.vector,
+          masks_srs: 4326,
+          strategy: state.strategy
+        };
+        console.log("starting mask canvas with:", data)
+        geocanvas.maskCanvas(data);
         const end = performance.now();
         const duration = end - start;
         console.log(`masking took ${duration.toFixed()} milliseconds`);        
       });
     </script>
-
-    <hr>
-
-    <h2>Result</h2>
-    <div id="result"></div>
   </body>
 </html>

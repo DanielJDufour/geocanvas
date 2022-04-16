@@ -22,7 +22,7 @@
         context.drawImage(img, 0, 0);
 
         // clip the image
-        const geojson = await fetch("./data/sri-lanka.geojson").then(response => response.json());
+        const geojson = await fetch("./data/sri-lanka-hires.geojson").then(response => response.json());
         
         const start = performance.now();
         geocanvas.maskCanvas({
