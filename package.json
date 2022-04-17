@@ -42,7 +42,7 @@
     "webpack-cli": "^4.9.2"
   },
   "dependencies": {
-    "geomask": "^0.3.2",
+    "geomask": "^0.3.3",
     "to-canvas": "^0.1.0",
     "xdim": "^1.5.2"
   }
