@@ -65,7 +65,7 @@
     <br/>
     <br/>
 
-    <h2>Raster Bounding Box</h2>
+    <h2>Raster CRS</h2>
     <input id="raster-crs" name="raster-crs" type="text" placeholder="EPSG:4326" style="width: 400px;" >
     <script>
       document.getElementById("raster-crs").addEventListener("change", function (event) {
@@ -136,7 +136,9 @@
         geocanvas.maskCanvas(data);
         const end = performance.now();
         const duration = end - start;
-        console.log(`masking took ${duration.toFixed()} milliseconds`);        
+        console.log(`masking took ${duration.toFixed()} milliseconds`);    
+        
+        window.scrollTo(0, 0);
       });
     </script>
   </body>
